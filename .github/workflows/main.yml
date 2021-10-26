@@ -1,0 +1,76 @@
+# workflow name
+name: Hexo Blog CI
+
+# master branch on push, auto run
+on: 
+  push:
+    branches:
+      - master
+      
+jobs:
+  deploy: 
+    runs-on: ubuntu-latest 
+        
+    steps:
+    # check it to your workflow can access it
+    # from: https://github.com/actions/checkout
+    - name: Checkout Repository master branch
+      uses: actions/checkout@master 
+
+    # from: https://github.com/actions/setup-node  
+    - name: Setup Node.js 14.x 
+      uses: actions/setup-node@master
+      with:
+        node-version: "14.x"
+
+    - name: Use Python
+      uses: actions/setup-python@master
+      with:
+        python-version: '3.x'
+        architecture: 'x64'
+    
+    - name: Npm Install
+      run: |
+        npm install hexo -g
+        npm install
+    
+    - name: Hexo Generate
+      run: |
+        hexo clean
+        hexo generate 
+    
+    - name: COSCMD Install # 安装 COSCMD
+      run: pip3 install coscmd
+
+    - name: COSCMD Config Init # 配置初始化
+      run: |
+        touch ~/.cos.conf
+        coscmd config \
+          -a ${{ secrets.ID }} \
+          -s ${{ secrets.KEY }} \
+          -b hexo-blog-us-1257213793 \
+          -r na-ashburn
+
+    - name: COSCMD Upload # 同步上传文件, 并删除本地已经删除的文件
+      run: coscmd upload -rs --delete public/ / -y
+
+    - name: COSCMD Config Clear # 配置清除
+      run: cat /dev/null > ~/.cos.conf
+    
+    - name: TCCLI Install
+      run: pip3 install tccli
+    
+    - name: TCCLI Config Init
+      run: |
+        tccli configure set secretId ${{ secrets.ID }}
+        tccli configure set secretKey ${{ secrets.KEY }}
+        tccli configure set region na-ashburn
+    
+    - name: TCCLI Run
+      run: tccli cdn PurgePathCache --endpoint cdn.tencentcloudapi.com --Paths '["https://zaran.hauhau.cn/"]' --FlushType flush
+    
+    - name: TCCLI Config Clear
+      run: |
+        tccli configure set secretId null
+        tccli configure set secretKey null
+        tccli configure set region null
