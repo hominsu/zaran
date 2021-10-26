@@ -48,7 +48,7 @@ jobs:
         coscmd config \
           -a ${{ secrets.ID }} \
           -s ${{ secrets.KEY }} \
-          -b hzaran-us-1257213793 \
+          -b zaran-us-1257213793 \
           -r na-ashburn
 
     - name: COSCMD Upload # 同步上传文件, 并删除本地已经删除的文件
