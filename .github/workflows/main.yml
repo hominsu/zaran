@@ -1,5 +1,5 @@
 # workflow name
-name: Hexo Blog CI
+name: ZaRan CI
 
 # master branch on push, auto run
 on: 
