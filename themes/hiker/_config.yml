@@ -9,6 +9,7 @@ menu:
   # Categories: categories
   # Tags: tags
   About: about
+  Tutorial: tutorial
 rss: /atom.xml
 
 since: 2013

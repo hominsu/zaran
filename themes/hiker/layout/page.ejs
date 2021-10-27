@@ -1,1 +1,9 @@
-<%- partial('_partial/article', {post: page, index: false}) %>
+<% if (is_current("tutorial", false)){ %>
+    <% site.posts.each(function(post){ %>
+        <% if (post.notshow != true && post.tutorial == true){ %>
+          <%- partial('_partial/article', {post: post, index: true}) %>
+        <% } %>
+    <% }) %>
+<% } else { %>
+    <%- partial('_partial/article', {post: page, index: false}) %>
+<% } %>
